@@ -55,11 +55,20 @@ struct ContentView: View {
     @State var newDifficulty: String = ""
     @State var newInstruction: String = ""
     @State var newTime: Int = 0
-    
+    @State var searchText = ""
+  
+    var filteredBooks: [RecepiBook]{
+        if searchText.isEmpty{
+            return myBooks
+        }
+        return myBooks.filter{book in book.title.contains(searchText)
+            
+    }
     var body: some View {
+        
         NavigationStack {
             List {
-                ForEach(myBooks) { book in
+                ForEach(filteredBooks) { book in
                     NavigationLink {
                         DetailView(Recipe: book)
                     } label: {
@@ -78,7 +87,14 @@ struct ContentView: View {
                 }.onDelete { IndexSet in
                     myBooks.remove(atOffsets: IndexSet)
                 }
+                .searchable(text: $searchText,prompt: "search here")
+                
             }
+           
+            
+            .navigationTitle("Recipe Book")
+           
+            
             
             TextField("Recipe Name", text: $newTitle)
             TextField("Ingredients", text: $ingredientInput)
@@ -106,7 +122,11 @@ struct ContentView: View {
                 newTime = 0
             }
         }
+        .padding(20)
+        
     }
+    
+    
 }
 struct DetailView: View {
     let Recipe: RecepiBook
@@ -115,9 +135,9 @@ struct DetailView: View {
             Text(Recipe.title)
             HStack {
                 Text("Igreedients:")
-                if Recipe.ingredient.count > 1 {
-                    ForEach(0..<Recipe.ingredient.count) { value in
-                        Text(Recipe.ingredient[value])
+                if Recipe.ingredient.count > 0 {
+                    ForEach(Recipe.ingredient, id: \.self) { ingreident in
+                        Text(ingreident)
                     }
                 }
             }
