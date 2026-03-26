@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct RecepiBook: Identifiable {
+struct Recipe: Identifiable {
     let id = UUID()
     let title: String
     let ingredient: [String]
@@ -17,8 +17,8 @@ struct RecepiBook: Identifiable {
 }
 
 struct ContentView: View {
-    @State var myBooks = [
-        RecepiBook(
+    @State var recipeBook = [
+        Recipe(
             title: "Pannkakor",
             ingredient: ["Oil", "flour", "sugar"],
             difficulty: "easy",
@@ -26,21 +26,21 @@ struct ContentView: View {
                 "Mix flour, milk, eggs, sugar, and baking powder into a smooth batter, pour onto a hot pan.",
             time: 15
         ),
-        RecepiBook(
+        Recipe(
             title: "Lasagna",
             ingredient: ["meat", "spices","lasagna sheet"],
             difficulty: "medium",
             instruction: "cookes layer by layer",
             time: 60
         ),
-        RecepiBook(
+        Recipe(
             title: "Tacos",
             ingredient: ["beef", "tomato paste","tortilla"],
             difficulty: "hard",
             instruction: "fried meat with veggies",
             time: 20
         ),
-        RecepiBook(
+        Recipe(
             title: "Sushibowls ",
             ingredient: ["fish", "rice"],
             difficulty: "mrdium",
@@ -57,104 +57,52 @@ struct ContentView: View {
     @State var newTime: Int = 0
     @State var searchText = ""
   
-    var filteredBooks: [RecepiBook]{
+    var filteredBooks: [Recipe]{
         if searchText.isEmpty{
-            return myBooks
+            return recipeBook
         }
-        return myBooks.filter{book in book.title.contains(searchText)
+        return recipeBook.filter{book in book.title.contains(searchText)
         }
     }
     var body: some View {
         
-        NavigationStack {
-            List {
-                ForEach(filteredBooks) { book in
-                    NavigationLink {
-                        DetailView(Recipe: book)
-                    } label: {
-                        VStack {
-                            Text(book.title)
-                                .font(.headline)
-                                .foregroundColor(.primary)
-                                .padding()
-                            Text("\(book.time)")
-                            HStack {
-                                Text("\(book.difficulty.capitalized)")
-                                Spacer()
+        TabView {
+            Tab("Recipes", systemImage: "book") {
+                NavigationStack {
+                    List {
+                        ForEach(filteredBooks) { book in
+                            NavigationLink {
+                                DetailView(Recipe: book)
+                            } label: {
+                                VStack {
+                                    Text(book.title)
+                                        .font(.headline)
+                                        .foregroundColor(.primary)
+                                        .padding()
+                                    Text("\(book.time)")
+                                    HStack {
+                                        Text("\(book.difficulty.capitalized)")
+                                        Spacer()
+                                    }
+                                }
                             }
+                        }.onDelete { IndexSet in
+                            recipeBook.remove(atOffsets: IndexSet)
                         }
                     }
-                }.onDelete { IndexSet in
-                    myBooks.remove(atOffsets: IndexSet)
-                }
-            }
-            .searchable(text: $searchText,prompt: "search here")
-            .navigationTitle("Recipe Book")
-//            TextField("Recipe Name", text: $newTitle)
-//            TextField("Ingredients", text: $ingredientInput)
-//            Button("Add ingredient") {
-//                newIngredient.append(ingredientInput)
-//                ingredientInput = ""
-//            }
-//            TextField("Recipe Difficulty", text: $newDifficulty)
-//            TextField("Instructions", text: $newInstruction)
-//            TextField("Cooking time", value: $newTime, format: .number)
-//            Button("Add Recepi") {
-//                myBooks.append(
-//                    RecepiBook(
-//                        title: newTitle,
-//                        ingredient: newIngredient,
-//                        difficulty: newDifficulty,
-//                        instruction: newInstruction,
-//                        time: newTime
-//                    )
-//                )
-//                newTitle = ""
-//                newDifficulty = ""
-//                newInstruction = ""
-//                newTime = 0
-            }
-            TabView {
-                Tab("Show", systemImage: "fork.knife") {
-//                    RecepiMaker()
-                }
-                Tab("Create", systemImage: "fork.knife") {
-                    TextField("Recipe Name", text: $newTitle)
-                    TextField("Ingredients", text: $ingredientInput)
-                    Button("Add ingredient") {
-                        newIngredient.append(ingredientInput)
-                        ingredientInput = ""
-                    }
-                    TextField("Recipe Difficulty", text: $newDifficulty)
-                    TextField("Instructions", text: $newInstruction)
-                    TextField("Cooking time", value: $newTime, format: .number)
-                    Button("Add Recepi") {
-                        myBooks.append(
-                            RecepiBook(
-                                title: newTitle,
-                                ingredient: newIngredient,
-                                difficulty: newDifficulty,
-                                instruction: newInstruction,
-                                time: newTime
-                            )
-                        )
-                        newTitle = ""
-                        newDifficulty = ""
-                        newInstruction = ""
-                        newTime = 0
-                }
-            }
-//        }
-//        .padding(20)
-        
-    }
-            
-    }
+                    .searchable(text: $searchText,prompt: "search here")
+                    .navigationTitle("Recipe Book")
 
-
+                }
+            }
+            Tab("Create", systemImage: "fork.knife") {
+                RecepiMaker(recipe: $recipeBook)
+            }
+        }
+    }
 }
 struct DetailView: View {
-    let Recipe: RecepiBook
+    let Recipe: Recipe
     var body: some View {
         VStack {
             Text(Recipe.title)
@@ -174,9 +122,78 @@ struct DetailView: View {
 
 struct RecepiMaker: View {
     
+    @Binding var recipe: [Recipe]
+    
+    @State var newTitle: String = ""
+    @State var newIngredient: [String] = [""]
+    @State var ingredientInput: String = ""
+    @State var newDifficulty: String = ""
+    @State var newInstruction: String = ""
+    @State var newTime: Int = 0
+    
     var body: some View {
-        
-        Text("hello world")
+        VStack {
+            Text("Add Recipe")
+                .font(.largeTitle)
+                .bold()
+            
+            TextField("Recipe Name", text: $newTitle)
+                .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(12)
+            
+            HStack{
+                TextField("Ingredients", text: $ingredientInput)
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .cornerRadius(12)
+                Button {
+                    newIngredient.append(ingredientInput)
+                    ingredientInput = ""
+                } label: {
+                    Image(systemName: "plus")
+                }
+                .padding()
+                .background(Color(.blue))
+                .foregroundColor(.white)
+                .cornerRadius(24)
+            }
+            
+            TextField("Recipe Difficulty", text: $newDifficulty)
+                .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(12)
+            TextField("Instructions", text: $newInstruction)
+                .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(12)
+            TextField("Cooking time", value: $newTime, format: .number)
+                .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(12)
+            Button("Add Recipe") {
+                recipe.append(
+                    Recipe(
+                        title: newTitle,
+                        ingredient: newIngredient,
+                        difficulty: newDifficulty,
+                        instruction: newInstruction,
+                        time: newTime
+                    )
+                )
+                newTitle = ""
+                newIngredient = [""]
+                newDifficulty = ""
+                newInstruction = ""
+                newTime = 0
+            }
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(.blue)
+            .foregroundColor(.white)
+            .cornerRadius(12)
+        }
+        .padding()
     }
 }
 
