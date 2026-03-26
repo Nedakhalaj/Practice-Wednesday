@@ -106,27 +106,25 @@ struct DetailView: View {
     var body: some View {
         
         List{
+            Text(Recipe.title)
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .frame(maxWidth: .infinity, alignment: .center)
+            
             VStack {
-                Text(Recipe.title)
-                    Spacer(minLength: 20)
-                    .frame(height: 30)
-                    .border(.black)
-                    .shadow(radius: 2)
-                
+                Text("Igreedients:")
+                    .font(.title)
+                    .frame(maxWidth: .infinity, alignment: .center)
                 HStack {
-                    
-                    Text("Igreedients:")
-                    
                     ForEach(Recipe.ingredient, id: \.self) { ingreident in
                         Text(ingreident)
-                        
-                    }
                     
-                }
-                Text(Recipe.instruction)
-                    .padding(20)
+                    }
+                } // Hstack end here
+                
             }
-            
+            Text(Recipe.instruction)
+                .padding(20)
         }
         
     }
@@ -139,9 +137,9 @@ struct RecepiMaker: View {
     @Binding var recipe: [Recipe]
     
     @State var newTitle: String = ""
-    @State var newIngredient: [String] = [""]
+    @State var newIngredient: [String] = [ ]
     @State var ingredientInput: String = ""
-    @State var newDifficulty: String = ""
+    @State var newDifficulty: String = "easy"
     @State var newInstruction: String = ""
     @State var newTime: Int = 0
     
@@ -177,12 +175,27 @@ struct RecepiMaker: View {
                     .background(Color(.blue))
                     .foregroundColor(.white)
                     .cornerRadius(24)
+                } // Hstack end
+                    if (newIngredient.count > 0) {
+                        ScrollView(.horizontal){
+                            HStack{
+                            ForEach(newIngredient, id: \.self) { ingreduen in
+                                Text(ingreduen)
+                                    .padding()
+                                    .background(Color(.systemGray6))
+                                    .cornerRadius(12)
+                            }
+                        }
+                    }
+                } // ingredient list
+                HStack{
+                    Text("Difficulty selector")
+                    Picker("Difficulty", selection: $newDifficulty){
+                        Text("Easy").tag("easy")
+                        Text("Medium").tag("Medium")
+                        Text("Hard").tag("Hard")
+                    }
                 }
-                
-                TextField("Recipe Difficulty", text: $newDifficulty)
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(12)
                 TextField("Instructions", text: $newInstruction)
                     .padding()
                     .background(Color(.systemGray6))
