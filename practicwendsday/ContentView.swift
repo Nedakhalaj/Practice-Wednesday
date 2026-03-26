@@ -23,19 +23,19 @@ struct ContentView: View {
             ingredient: ["Oil", "flour", "sugar"],
             difficulty: "easy",
             instruction:
-                "mixed flour and sugar, heat oil, pour in batter, cook on griddle",
+                "Mix flour, milk, eggs, sugar, and baking powder into a smooth batter, pour onto a hot pan.",
             time: 15
         ),
         RecepiBook(
-            title: "Lasagne",
-            ingredient: ["meat", "spices"],
+            title: "Lasagna",
+            ingredient: ["meat", "spices","lasagna sheet"],
             difficulty: "medium",
             instruction: "cookes layer by layer",
             time: 60
         ),
         RecepiBook(
             title: "Tacos",
-            ingredient: [],
+            ingredient: ["beef", "tomato paste","tortilla"],
             difficulty: "hard",
             instruction: "fried meat with veggies",
             time: 20
@@ -48,7 +48,7 @@ struct ContentView: View {
             time: 30
         ),
     ]
-
+    
     @State var newTitle: String = ""
     @State var newIngredient: [String] = [""]
     @State var ingredientInput: String = ""
@@ -79,7 +79,7 @@ struct ContentView: View {
                     myBooks.remove(atOffsets: IndexSet)
                 }
             }
-
+            
             TextField("Recipe Name", text: $newTitle)
             TextField("Ingredients", text: $ingredientInput)
             Button("Add ingredient") {
@@ -89,7 +89,7 @@ struct ContentView: View {
             TextField("Recipe Difficulty", text: $newDifficulty)
             TextField("Instructions", text: $newInstruction)
             TextField("Cooking time", value: $newTime, format: .number)
-
+            
             Button("Add Recepi") {
                 myBooks.append(
                     RecepiBook(
@@ -125,16 +125,19 @@ struct DetailView: View {
         }
     }
 }
+
+
 struct RecepiMaker: View {
-
-    let Recipe: RecepiBook
-
+    
+    let recipe: RecepiBook
+    
     var body: some View {
-
+        
         Text("Test")
     }
 }
 
 #Preview {
     ContentView()
+    
 }
