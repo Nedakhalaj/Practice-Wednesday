@@ -56,7 +56,7 @@ struct ContentView: View {
     @State var newInstruction: String = ""
     @State var newTime: Int = 0
     @State var searchText = ""
-  
+    
     var filteredBooks: [Recipe]{
         if searchText.isEmpty{
             return recipeBook
@@ -92,7 +92,7 @@ struct ContentView: View {
                     }
                     .searchable(text: $searchText,prompt: "search here")
                     .navigationTitle("Recipe Book")
-
+                    
                 }
             }
             Tab("Create", systemImage: "fork.knife") {
@@ -104,20 +104,34 @@ struct ContentView: View {
 struct DetailView: View {
     let Recipe: Recipe
     var body: some View {
-        VStack {
-            Text(Recipe.title)
-            HStack {
-                Text("Igreedients:")
-                if Recipe.ingredient.count > 0 {
+        
+        List{
+            VStack {
+                Text(Recipe.title)
+                    Spacer(minLength: 20)
+                    .frame(height: 30)
+                    .border(.black)
+                    .shadow(radius: 2)
+                
+                HStack {
+                    
+                    Text("Igreedients:")
+                    
                     ForEach(Recipe.ingredient, id: \.self) { ingreident in
                         Text(ingreident)
+                        
                     }
+                    
                 }
+                Text(Recipe.instruction)
+                    .padding(20)
             }
-            Text(Recipe.instruction)
+            
         }
+        
     }
 }
+
 
 
 struct RecepiMaker: View {
@@ -132,68 +146,75 @@ struct RecepiMaker: View {
     @State var newTime: Int = 0
     
     var body: some View {
-        VStack {
-            Text("Add Recipe")
-                .font(.largeTitle)
-                .bold()
+        ZStack{
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color.gray)
+                .opacity(0.3)
+                .frame(height:500)
             
-            TextField("Recipe Name", text: $newTitle)
-                .padding()
-                .background(Color(.systemGray6))
-                .cornerRadius(12)
-            
-            HStack{
-                TextField("Ingredients", text: $ingredientInput)
+            VStack {
+                Text("Add Recipe")
+                    .font(.largeTitle)
+                    .bold()
+                
+                TextField("Recipe Name", text: $newTitle)
                     .padding()
                     .background(Color(.systemGray6))
                     .cornerRadius(12)
-                Button {
-                    newIngredient.append(ingredientInput)
-                    ingredientInput = ""
-                } label: {
-                    Image(systemName: "plus")
+                
+                HStack{
+                    TextField("Ingredients", text: $ingredientInput)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(12)
+                    Button {
+                        newIngredient.append(ingredientInput)
+                        ingredientInput = ""
+                    } label: {
+                        Image(systemName: "plus")
+                    }
+                    .padding()
+                    .background(Color(.blue))
+                    .foregroundColor(.white)
+                    .cornerRadius(24)
+                }
+                
+                TextField("Recipe Difficulty", text: $newDifficulty)
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .cornerRadius(12)
+                TextField("Instructions", text: $newInstruction)
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .cornerRadius(12)
+                TextField("Cooking time", value: $newTime, format: .number)
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .cornerRadius(12)
+                Button("Add Recipe") {
+                    recipe.append(
+                        Recipe(
+                            title: newTitle,
+                            ingredient: newIngredient,
+                            difficulty: newDifficulty,
+                            instruction: newInstruction,
+                            time: newTime
+                        )
+                    )
+                    newTitle = ""
+                    newIngredient = [""]
+                    newDifficulty = ""
+                    newInstruction = ""
+                    newTime = 0
                 }
                 .padding()
-                .background(Color(.blue))
+                .frame(maxWidth: .infinity)
+                .background(.blue)
                 .foregroundColor(.white)
-                .cornerRadius(24)
-            }
-            
-            TextField("Recipe Difficulty", text: $newDifficulty)
-                .padding()
-                .background(Color(.systemGray6))
                 .cornerRadius(12)
-            TextField("Instructions", text: $newInstruction)
-                .padding()
-                .background(Color(.systemGray6))
-                .cornerRadius(12)
-            TextField("Cooking time", value: $newTime, format: .number)
-                .padding()
-                .background(Color(.systemGray6))
-                .cornerRadius(12)
-            Button("Add Recipe") {
-                recipe.append(
-                    Recipe(
-                        title: newTitle,
-                        ingredient: newIngredient,
-                        difficulty: newDifficulty,
-                        instruction: newInstruction,
-                        time: newTime
-                    )
-                )
-                newTitle = ""
-                newIngredient = [""]
-                newDifficulty = ""
-                newInstruction = ""
-                newTime = 0
             }
             .padding()
-            .frame(maxWidth: .infinity)
-            .background(.blue)
-            .foregroundColor(.white)
-            .cornerRadius(12)
         }
-        .padding()
     }
 }
 
