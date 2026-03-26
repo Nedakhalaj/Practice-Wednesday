@@ -62,7 +62,7 @@ struct ContentView: View {
             return myBooks
         }
         return myBooks.filter{book in book.title.contains(searchText)
-            
+        }
     }
     var body: some View {
         
@@ -87,46 +87,71 @@ struct ContentView: View {
                 }.onDelete { IndexSet in
                     myBooks.remove(atOffsets: IndexSet)
                 }
-                .searchable(text: $searchText,prompt: "search here")
-                
             }
-           
-            
+            .searchable(text: $searchText,prompt: "search here")
             .navigationTitle("Recipe Book")
-           
-            
-            
-            TextField("Recipe Name", text: $newTitle)
-            TextField("Ingredients", text: $ingredientInput)
-            Button("Add ingredient") {
-                newIngredient.append(ingredientInput)
-                ingredientInput = ""
+//            TextField("Recipe Name", text: $newTitle)
+//            TextField("Ingredients", text: $ingredientInput)
+//            Button("Add ingredient") {
+//                newIngredient.append(ingredientInput)
+//                ingredientInput = ""
+//            }
+//            TextField("Recipe Difficulty", text: $newDifficulty)
+//            TextField("Instructions", text: $newInstruction)
+//            TextField("Cooking time", value: $newTime, format: .number)
+//            Button("Add Recepi") {
+//                myBooks.append(
+//                    RecepiBook(
+//                        title: newTitle,
+//                        ingredient: newIngredient,
+//                        difficulty: newDifficulty,
+//                        instruction: newInstruction,
+//                        time: newTime
+//                    )
+//                )
+//                newTitle = ""
+//                newDifficulty = ""
+//                newInstruction = ""
+//                newTime = 0
             }
-            TextField("Recipe Difficulty", text: $newDifficulty)
-            TextField("Instructions", text: $newInstruction)
-            TextField("Cooking time", value: $newTime, format: .number)
-            
-            Button("Add Recepi") {
-                myBooks.append(
-                    RecepiBook(
-                        title: newTitle,
-                        ingredient: newIngredient,
-                        difficulty: newDifficulty,
-                        instruction: newInstruction,
-                        time: newTime
-                    )
-                )
-                newTitle = ""
-                newDifficulty = ""
-                newInstruction = ""
-                newTime = 0
+            TabView {
+                Tab("Show", systemImage: "fork.knife") {
+//                    RecepiMaker()
+                }
+                Tab("Create", systemImage: "fork.knife") {
+                    TextField("Recipe Name", text: $newTitle)
+                    TextField("Ingredients", text: $ingredientInput)
+                    Button("Add ingredient") {
+                        newIngredient.append(ingredientInput)
+                        ingredientInput = ""
+                    }
+                    TextField("Recipe Difficulty", text: $newDifficulty)
+                    TextField("Instructions", text: $newInstruction)
+                    TextField("Cooking time", value: $newTime, format: .number)
+                    Button("Add Recepi") {
+                        myBooks.append(
+                            RecepiBook(
+                                title: newTitle,
+                                ingredient: newIngredient,
+                                difficulty: newDifficulty,
+                                instruction: newInstruction,
+                                time: newTime
+                            )
+                        )
+                        newTitle = ""
+                        newDifficulty = ""
+                        newInstruction = ""
+                        newTime = 0
+                }
             }
-        }
-        .padding(20)
+//        }
+//        .padding(20)
         
     }
-    
-    
+            
+    }
+
+
 }
 struct DetailView: View {
     let Recipe: RecepiBook
@@ -149,11 +174,9 @@ struct DetailView: View {
 
 struct RecepiMaker: View {
     
-    let recipe: RecepiBook
-    
     var body: some View {
         
-        Text("Test")
+        Text("hello world")
     }
 }
 
