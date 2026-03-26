@@ -23,19 +23,19 @@ struct ContentView: View {
             ingredient: ["Oil", "flour", "sugar"],
             difficulty: "easy",
             instruction:
-                "mixed flour and sugar, heat oil, pour in batter, cook on griddle",
+                "Mix flour, milk, eggs, sugar, and baking powder into a smooth batter, pour onto a hot pan.",
             time: 15
         ),
         RecepiBook(
-            title: "Lasagne",
-            ingredient: ["meat", "spices"],
+            title: "Lasagna",
+            ingredient: ["meat", "spices","lasagna sheet"],
             difficulty: "medium",
             instruction: "cookes layer by layer",
             time: 60
         ),
         RecepiBook(
             title: "Tacos",
-            ingredient: [],
+            ingredient: ["beef", "tomato paste","tortilla"],
             difficulty: "hard",
             instruction: "fried meat with veggies",
             time: 20
@@ -48,18 +48,27 @@ struct ContentView: View {
             time: 30
         ),
     ]
-
+    
     @State var newTitle: String = ""
     @State var newIngredient: [String] = [""]
     @State var ingredientInput: String = ""
     @State var newDifficulty: String = ""
     @State var newInstruction: String = ""
     @State var newTime: Int = 0
-    
+    @State var searchText = ""
+  
+    var filteredBooks: [RecepiBook]{
+        if searchText.isEmpty{
+            return myBooks
+        }
+        return myBooks.filter{book in book.title.contains(searchText)
+            
+    }
     var body: some View {
+        
         NavigationStack {
             List {
-                ForEach(myBooks) { book in
+                ForEach(filteredBooks) { book in
                     NavigationLink {
                         DetailView(Recipe: book)
                     } label: {
@@ -78,8 +87,15 @@ struct ContentView: View {
                 }.onDelete { IndexSet in
                     myBooks.remove(atOffsets: IndexSet)
                 }
+                .searchable(text: $searchText,prompt: "search here")
+                
             }
-
+           
+            
+            .navigationTitle("Recipe Book")
+           
+            
+            
             TextField("Recipe Name", text: $newTitle)
             TextField("Ingredients", text: $ingredientInput)
             Button("Add ingredient") {
@@ -89,7 +105,7 @@ struct ContentView: View {
             TextField("Recipe Difficulty", text: $newDifficulty)
             TextField("Instructions", text: $newInstruction)
             TextField("Cooking time", value: $newTime, format: .number)
-
+            
             Button("Add Recepi") {
                 myBooks.append(
                     RecepiBook(
@@ -106,7 +122,11 @@ struct ContentView: View {
                 newTime = 0
             }
         }
+        .padding(20)
+        
     }
+    
+    
 }
 struct DetailView: View {
     let Recipe: RecepiBook
@@ -115,9 +135,9 @@ struct DetailView: View {
             Text(Recipe.title)
             HStack {
                 Text("Igreedients:")
-                if Recipe.ingredient.count > 1 {
-                    ForEach(0..<Recipe.ingredient.count) { value in
-                        Text(Recipe.ingredient[value])
+                if Recipe.ingredient.count > 0 {
+                    ForEach(Recipe.ingredient, id: \.self) { ingreident in
+                        Text(ingreident)
                     }
                 }
             }
@@ -125,16 +145,19 @@ struct DetailView: View {
         }
     }
 }
+
+
 struct RecepiMaker: View {
-
-    let Recipe: RecepiBook
-
+    
+    let recipe: RecepiBook
+    
     var body: some View {
-
+        
         Text("Test")
     }
 }
 
 #Preview {
     ContentView()
+    
 }
